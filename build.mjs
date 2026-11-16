@@ -3,6 +3,7 @@
 import {mkdirSync, writeFileSync, rmSync, cpSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {calcs, CATS} from './calcs.mjs';
+import {GUIDES} from './guides.mjs';
 
 execFileSync(process.execPath, ['test.mjs'], {stdio: 'inherit'}); // 계산이 틀리면 여기서 멈춤
 
@@ -57,6 +58,13 @@ const grid = list => `<ul class="cards">${list.map(card).join('')}</ul>`;
 
 rmSync(root, {recursive: true, force: true});
 const paths = [];
+
+// 설명글(공식·기준표·가이드)은 guides.mjs 우선. 계산기마다 본문 글자수(공백 제외 아님, 태그 뺀 글자)를 확인해 1,500자 미만이면 알림.
+for (const c of calcs) c.sections = GUIDES[c.slug] || c.sections;
+const textLen = c => strip(c.lead + c.sections.flat().join('') + c.faq.flat().join('')).replace(/\s+/g, ' ').length;
+const short = calcs.filter(c => textLen(c) < 1500);
+console.log(calcs.map(c => `${c.slug} ${textLen(c).toLocaleString('ko-KR')}자`).join(' · '));
+if (short.length) console.log(`⚠ 1,500자 미만: ${short.map(c => c.slug).join(', ')}`);
 
 // ---------- 첫 화면: 기본 계산기 + 분류별 계산기 ----------
 const keys = ['C', '±', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '-', '1', '2', '3', '+', '⌫', '0', '.', '='];
