@@ -1,4 +1,4 @@
-# cal.guidejung.com (계산기 모음) 운영 안내
+# cal.guidejung.com (척척계산) 운영 안내
 
 자주 쓰는 계산기를 모은 정적 사이트입니다. life.guidejung.com(`D:\guidejung\life-site`)과 같은 방식(빌드 스크립트 하나 → GitHub Pages)으로 운영합니다.
 

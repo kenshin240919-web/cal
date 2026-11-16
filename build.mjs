@@ -8,7 +8,7 @@ import {GUIDES} from './guides.mjs';
 execFileSync(process.execPath, ['test.mjs'], {stdio: 'inherit'}); // 계산이 틀리면 여기서 멈춤
 
 const SITE = {
-  name: '계산기 모음',
+  name: '척척계산',
   origin: 'https://cal.guidejung.com',
   desc: '연봉 실수령액, 퇴직금, 대출이자, 실업급여, 환율, 날짜, 퍼센트까지 자주 쓰는 계산기를 한곳에 모았습니다.',
   // 문의: 환경변수 CAL_EMAIL이 있으면 메일 주소, 없으면 같은 운영자의 life 문의 페이지로 연결
@@ -68,7 +68,7 @@ if (short.length) console.log(`⚠ 1,500자 미만: ${short.map(c => c.slug).joi
 
 // ---------- 첫 화면: 분류별 계산기 목록 ----------
 const mini = c => `<li><a href="/${c.slug}/"><span aria-hidden="true">${c.icon}</span><b>${esc(c.name)}</b><small>${esc(c.brief)}</small></a></li>`;
-const home = `<section class="hello"><h1>계산기 모음</h1><p>${SITE.desc}</p></section>
+const home = `<section class="hello"><h1>${SITE.name}</h1><p>${SITE.desc}</p></section>
 <div class="cats">${CATS.map(([s, n]) => {const list = calcs.filter(c => c.cat === s); return list.length ? `<section id="${s}" class="cat"><h2>${n}</h2><ul class="mini">${list.map(mini).join('')}</ul></section>` : '';}).join('')}</div>`;
 write('/', page({title: SITE.name, desc: SITE.desc, path: '/', body: home,
   head: ld([{'@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: url('/'), inLanguage: 'ko'},
@@ -97,7 +97,7 @@ ${c.sections.map(([h, html]) => `<h2>${esc(h)}</h2>${html.replace(/<table/g, '<d
 // ---------- 고정 페이지 ----------
 const statics = [
   ['/about/', '사이트 소개', `${SITE.name} 운영 원칙 안내입니다.`, `<article class="post"><h1>사이트 소개</h1>
-<p>${SITE.name}(cal.guidejung.com)은 <a href="https://guidejung.com/">guidejung.com</a>과 같은 운영자가 만드는 무료 계산기 사이트입니다. 급여·퇴직금·실업급여, 대출·예적금, 날짜·나이, 생활 계산기 ${calcs.length + 1}가지를 제공합니다.</p>
+<p>${SITE.name}(cal.guidejung.com)은 <a href="https://guidejung.com/">guidejung.com</a>과 같은 운영자가 만드는 무료 계산기 사이트입니다. 급여·퇴직금·실업급여, 대출·예적금, 날짜·나이, 생활 계산기 ${calcs.length}가지를 제공합니다.</p>
 <h2>이렇게 만듭니다</h2><ul><li>최저임금·4대보험 요율·세율은 정부 발표와 법령으로 확인해 넣고, 페이지마다 기준일을 표시합니다.</li><li>국회 확정 전인 제도는 확정 전이라고 따로 표시합니다.</li><li>입력한 숫자와 글은 브라우저 안에서만 계산하며 서버로 보내지 않습니다.</li></ul>
 <h2>광고</h2><p>이 사이트는 Google AdSense 광고를 싣습니다. 광고와 계산 결과는 구분해 보여 주며 광고 클릭을 권하지 않습니다.</p>
 <h2>문의</h2><p>계산이 틀리거나 바뀐 요율을 알려 주시면 확인 후 고치겠습니다. <a href="${SITE.contact}">문의하기</a></p></article>`],
