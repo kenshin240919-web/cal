@@ -155,31 +155,3 @@ document.querySelectorAll('form.calc').forEach(f => {
   f.addEventListener('input', e => {if (e.target.classList.contains('money')) comma(e.target); run(f);});
   run(f);
 });
-
-// ---------- 기본 계산기(첫 화면) ----------
-const basic = document.querySelector('[data-basic]');
-if (basic) {
-  const screen = basic.querySelector('output'), memo = basic.querySelector('.memo');
-  let cur = '0', acc = null, op = null, fresh = false;
-  const show = () => {screen.textContent = Number.isNaN(+cur) ? '오류' : (+cur).toLocaleString('ko-KR', {maximumFractionDigits: 10}) + (cur.endsWith('.') ? '.' : ''); memo.textContent = acc !== null && op ? `${(+acc).toLocaleString('ko-KR', {maximumFractionDigits: 10})} ${op}` : '';};
-  const press = k => {
-    if (/^[0-9]$/.test(k)) {cur = fresh || cur === '0' ? k : cur.length < 15 ? cur + k : cur; fresh = false;}
-    else if (k === '.') {if (fresh) cur = '0'; if (!cur.includes('.')) cur += '.'; fresh = false;}
-    else if (k === 'C') {cur = '0'; acc = op = null;}
-    else if (k === '⌫') {cur = fresh ? cur : cur.slice(0, -1) || '0';}
-    else if (k === '±') {cur = String(-cur);}
-    else if (k === '%') {cur = String(acc !== null && /[+-]/.test(op) ? acc * cur / 100 : cur / 100); fresh = true;}
-    else if ('+-×÷'.includes(k)) {if (acc !== null && op && !fresh) cur = String(C.applyOp(+acc, op, +cur)); acc = cur; op = k; fresh = true;}
-    else if (k === '=') {if (acc !== null && op) {cur = String(C.applyOp(+acc, op, +cur)); acc = op = null; fresh = true;}}
-    show();
-  };
-  basic.addEventListener('mousedown', e => e.preventDefault()); // 마우스로 누른 버튼에 포커스가 남아 Enter가 두 번 눌리지 않게
-  basic.addEventListener('click', e => {const b = e.target.closest('button'); if (b) press(b.dataset.k || b.textContent.trim());});
-  const KEYS = {'*': '×', '/': '÷', Enter: '=', Backspace: '⌫', Escape: 'C', Delete: 'C'};
-  document.addEventListener('keydown', e => {
-    if (e.target.closest?.('input,textarea,select,a,button') || e.ctrlKey || e.metaKey || e.altKey) return;
-    const k = KEYS[e.key] || e.key;
-    if (/^[0-9.+\-×÷=%C⌫]$/.test(k)) {e.preventDefault(); press(k);}
-  });
-  show();
-}

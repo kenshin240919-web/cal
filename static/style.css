@@ -1,5 +1,5 @@
-:root{--bg:#f6f7f9;--card:#fff;--fg:#1d2330;--muted:#5d6675;--line:#e2e5ea;--brand:#2463eb;--brand-soft:#e8efff;--warn:#b42318;--warn-soft:#fdecea;--key:#eef0f4;--op:#2463eb}
-@media (prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--fg:#e8ebf0;--muted:#a3abb8;--line:#2c3340;--brand:#7aa2ff;--brand-soft:#1f2b45;--warn:#ff8a80;--warn-soft:#3a1f1f;--key:#262c37;--op:#3b6cf0}}
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1d2330;--muted:#5d6675;--line:#e2e5ea;--brand:#2463eb;--brand-soft:#e8efff;--warn:#b42318;--warn-soft:#fdecea}
+@media (prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--fg:#e8ebf0;--muted:#a3abb8;--line:#2c3340;--brand:#7aa2ff;--brand-soft:#1f2b45;--warn:#ff8a80;--warn-soft:#3a1f1f}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:break-word}
 a{color:var(--brand)}
@@ -44,26 +44,15 @@ details summary{cursor:pointer}
 table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
 th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
 th{background:var(--bg)}
-/* 첫 화면: 왼쪽 분류별 계산기, 오른쪽 기본 계산기 */
-.home{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start}
+/* 첫 화면: 분류별 계산기 */
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.home .cat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.home .cat h2{font-size:15px;margin:0 0 4px;color:var(--muted)}
+.cats .cat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.cats .cat h2{font-size:15px;margin:0 0 4px;color:var(--muted)}
 .mini{list-style:none;margin:0;padding:0}
 .mini a{display:flex;gap:8px;align-items:center;padding:4px 2px;color:var(--fg);text-decoration:none;font-size:15px;font-weight:600}
 .mini a:hover{color:var(--brand)}
 .mini span{width:22px;text-align:center}
-@media (max-width:760px){.home{grid-template-columns:1fr}.cats{grid-template-columns:1fr 1fr}}
-/* 기본 계산기 */
-.basic{width:100%;max-width:340px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
-.screen{display:flex;flex-direction:column;align-items:flex-end;background:var(--bg);border-radius:10px;padding:6px 12px;margin-bottom:8px;min-height:62px;overflow:hidden}
-.memo{font-size:13px;color:var(--muted);min-height:18px}
-.screen output{font-size:28px;font-weight:700;white-space:nowrap}
-.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.keys button{font:inherit;font-size:18px;padding:8px 0;border:0;border-radius:10px;background:var(--key);color:var(--fg);cursor:pointer}
-.keys button:active{transform:scale(.96)}
-.keys .fn{color:var(--brand);font-weight:700}
-.keys .op{background:var(--op);color:#fff;font-weight:700}
+@media (max-width:760px){.cats{grid-template-columns:1fr 1fr}}
 /* 카드 목록 */
 .cards{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .cards a{display:grid;grid-template-columns:36px 1fr;gap:0 10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--fg);text-decoration:none;height:100%}

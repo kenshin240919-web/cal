@@ -196,9 +196,3 @@ export function countText(t) {
     euckr: chars.reduce((s, c) => s + (c.charCodeAt(0) > 127 ? 2 : 1), 0),
   };
 }
-
-// ---------- 기본 계산기 ----------
-export function applyOp(a, op, b) {
-  const r = op === '+' ? a + b : op === '-' ? a - b : op === '×' ? a * b : op === '÷' ? (b === 0 ? NaN : a / b) : b;
-  return Math.round(r * 1e10) / 1e10;
-}

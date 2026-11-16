@@ -66,12 +66,10 @@ const short = calcs.filter(c => textLen(c) < 1500);
 console.log(calcs.map(c => `${c.slug} ${textLen(c).toLocaleString('ko-KR')}자`).join(' · '));
 if (short.length) console.log(`⚠ 1,500자 미만: ${short.map(c => c.slug).join(', ')}`);
 
-// ---------- 첫 화면: 기본 계산기 + 분류별 계산기 ----------
-const keys = ['C', '±', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '-', '1', '2', '3', '+', '⌫', '0', '.', '='];
+// ---------- 첫 화면: 분류별 계산기 목록 ----------
 const mini = c => `<li><a href="/${c.slug}/" title="${esc(c.name)}"><span aria-hidden="true">${c.icon}</span>${esc(c.name.replace(/ 계산기$/, ''))}</a></li>`;
 const home = `<section class="hello"><h1>계산기 모음</h1><p>${SITE.desc}</p></section>
-<div class="home"><div class="cats">${CATS.map(([s, n]) => {const list = calcs.filter(c => c.cat === s); return list.length ? `<section id="${s}" class="cat"><h2>${n}</h2><ul class="mini">${list.map(mini).join('')}</ul></section>` : '';}).join('')}</div>
-<div class="basic" data-basic><div class="screen"><span class="memo"></span><output aria-live="polite">0</output></div><div class="keys">${keys.map(k => `<button type="button" class="${/[÷×+\-=]/.test(k) ? 'op' : /[C±%⌫]/.test(k) ? 'fn' : ''}" aria-label="${{'⌫': '지우기', '±': '부호 바꾸기', C: '모두 지우기'}[k] || k}">${k}</button>`).join('')}</div><p class="small">키보드 숫자·연산 기호도 쓸 수 있습니다.</p></div></div>`;
+<div class="cats">${CATS.map(([s, n]) => {const list = calcs.filter(c => c.cat === s); return list.length ? `<section id="${s}" class="cat"><h2>${n}</h2><ul class="mini">${list.map(mini).join('')}</ul></section>` : '';}).join('')}</div>`;
 write('/', page({title: SITE.name, desc: SITE.desc, path: '/', body: home,
   head: ld([{'@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: url('/'), inLanguage: 'ko'},
     {'@context': 'https://schema.org', '@type': 'ItemList', itemListElement: calcs.map((c, i) => ({'@type': 'ListItem', position: i + 1, name: c.name, url: url(`/${c.slug}/`)}))}])}));

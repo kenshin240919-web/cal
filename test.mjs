@@ -75,7 +75,5 @@ assert.equal(C.unemployment({monthly: 3e6, span: 0, over50: false, year: 2027}).
 // 배란일·글자수·기본 계산
 assert.deepEqual(C.cycles('2026-11-01', 28, 1)[0], {start: '2026-11-01', next: '2026-11-29', ovu: '2026-11-15', from: '2026-11-10', to: '2026-11-16'});
 assert.deepEqual(C.countText('안녕 하세요\nab'), {withSpace: 8, noSpace: 7, words: 3, lines: 2, utf8: 19, euckr: 14});
-assert.equal(C.applyOp(0.1, '+', 0.2), 0.3);
-assert.ok(Number.isNaN(C.applyOp(1, '÷', 0)));
 
 console.log('계산 검사 통과');

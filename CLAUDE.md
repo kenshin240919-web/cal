@@ -6,7 +6,7 @@
 - `calcs.mjs`: 계산기 페이지 내용(제목·설명·입력칸·FAQ). 한 항목 = `/slug/` 한 페이지. 분류는 `CATS`.
 - `guides.mjs`: 계산기 아래 설명글(계산 공식 → 기준표 → 상황별 가이드). 있으면 calcs.mjs의 `sections` 대신 씀. 예시 표 숫자는 core.js로 계산해 넣어 계산기와 항상 같음. 빌드가 페이지별 글자수를 출력하고 1,500자 미만이면 경고.
 - `static/core.js`: 계산 로직과 연도별 요율 `RATES`(최저임금·국민연금·건강·장기요양·고용·실업급여 상한). 화면 코드 없음.
-- `static/app.js`: 화면 동작. `<form data-calc="이름">` 입력이 바뀌면 `R[이름]`이 결과를 그림. 첫 화면 기본 계산기도 여기.
+- `static/app.js`: 화면 동작. `<form data-calc="이름">` 입력이 바뀌면 `R[이름]`이 결과를 그림.
 - `test.mjs`: 계산 검사. `build.mjs`가 먼저 실행하므로 검사가 틀리면 빌드가 멈춤.
 - 빌드: `node build.mjs` → `dist/` (첫 화면·계산기·소개·개인정보·404·sitemap·robots·llms.txt·ads.txt·CNAME). 미리보기: launch.json `cal`(포트 8797).
 - 배포: `main`에 push하면 `.github/workflows/pages.yml`이 GitHub Pages로 배포. 도메인은 Cloudflare DNS `cal` CNAME → kenshin240919-web.github.io(프록시 끔).
