@@ -38,12 +38,12 @@ function page({title, desc, path, body, head = ''}) {
 <title>${esc(full)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${url(path)}">
 <meta property="og:site_name" content="${esc(SITE.name)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website"><meta property="og:url" content="${url(path)}"><meta property="og:image" content="${url('/og.png')}?v=2"><meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css">
+<meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><link rel="alternate" type="application/rss+xml" title="${esc(SITE.name)}" href="${url('/rss.xml')}">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.adsense}" crossorigin="anonymous"></script>${head}</head>
 <body><a class="skip" href="#main">본문으로 바로가기</a><header><div class="wrap top"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"><span><b>${esc(SITE.name.slice(0, 2))}</b>${esc(SITE.name.slice(2))}</span></a></div>
 <nav class="gnb" aria-label="분류"><div class="wrap">${CATS.map(([s, n]) => `<a href="/#${s}">${n}</a>`).join('')}</div></nav></header>
 <main id="main" class="wrap">${body}</main>
-<footer><div class="wrap"><p><a href="/about/">사이트 소개</a> · <a href="/privacy/">개인정보 처리방침</a> · <a href="${SITE.contact}">문의</a></p>
+<footer><div class="wrap"><p><a href="/about/">사이트 소개</a> · <a href="/privacy/">개인정보 처리방침</a> · <a href="${SITE.contact}">문의</a> · <a href="/rss.xml">RSS</a></p>
 <p>계산 결과는 참고용이며 법적 효력이 없습니다. 실제 금액은 해당 기관·회사에서 확인해 주세요.</p>
 <p>© 2026 ${esc(SITE.name)} · <a href="https://guidejung.com/">guidejung.com</a></p></div></footer>
 <script type="module" src="/app.js"></script></body></html>`;
@@ -112,6 +112,10 @@ write('/404.html', page({title: '페이지를 찾을 수 없습니다', desc: SI
 
 // ---------- 사이트맵·robots·기타 ----------
 write('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map(p => `<url><loc>${url(p)}</loc><lastmod>${SITE.updated}</lastmod></url>`).join('')}</urlset>\n`);
+write('/rss.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${esc(SITE.name)}</title><link>${url('/')}</link><description>${esc(SITE.desc)}</description><language>ko</language><atom:link href="${url('/rss.xml')}" rel="self" type="application/rss+xml"/>${
+  calcs.map(c => `<item><title>${esc(c.name)}</title><link>${url(`/${c.slug}/`)}</link><guid isPermaLink="true">${url(`/${c.slug}/`)}</guid><description>${esc(c.desc)}</description><category>${esc(CATS.find(x => x[0] === c.cat)[1])}</category><pubDate>${new Date(SITE.updated + 'T09:00:00+09:00').toUTCString()}</pubDate></item>`).join('')}</channel></rss>
+`);
 write('/robots.txt', `User-agent: *\nAllow: /\n\n# AI 검색·답변 엔진 허용\nUser-agent: GPTBot\nAllow: /\nUser-agent: ClaudeBot\nAllow: /\nUser-agent: PerplexityBot\nAllow: /\nUser-agent: Google-Extended\nAllow: /\n\nSitemap: ${url('/sitemap.xml')}\n${SITE.daumPin ? SITE.daumPin + '\n' : ''}`);
 write('/llms.txt', `# ${SITE.name}\n\n> ${SITE.desc} 요율 기준일 ${SITE.updated}.\n\n${calcs.map(c => `- [${c.name}](${url(`/${c.slug}/`)}): ${c.desc}`).join('\n')}\n`);
 write('/ads.txt', `google.com, ${SITE.adsense.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n`);
