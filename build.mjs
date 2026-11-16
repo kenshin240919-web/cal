@@ -67,7 +67,7 @@ console.log(calcs.map(c => `${c.slug} ${textLen(c).toLocaleString('ko-KR')}자`)
 if (short.length) console.log(`⚠ 1,500자 미만: ${short.map(c => c.slug).join(', ')}`);
 
 // ---------- 첫 화면: 분류별 계산기 목록 ----------
-const mini = c => `<li><a href="/${c.slug}/" title="${esc(c.name)}"><span aria-hidden="true">${c.icon}</span>${esc(c.name.replace(/ 계산기$/, ''))}</a></li>`;
+const mini = c => `<li><a href="/${c.slug}/"><span aria-hidden="true">${c.icon}</span><b>${esc(c.name)}</b><small>${esc(c.brief)}</small></a></li>`;
 const home = `<section class="hello"><h1>계산기 모음</h1><p>${SITE.desc}</p></section>
 <div class="cats">${CATS.map(([s, n]) => {const list = calcs.filter(c => c.cat === s); return list.length ? `<section id="${s}" class="cat"><h2>${n}</h2><ul class="mini">${list.map(mini).join('')}</ul></section>` : '';}).join('')}</div>`;
 write('/', page({title: SITE.name, desc: SITE.desc, path: '/', body: home,

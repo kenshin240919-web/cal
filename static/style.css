@@ -45,14 +45,14 @@ table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
 th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
 th{background:var(--bg)}
 /* 첫 화면: 분류별 계산기 */
-.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-items:start}
 .cats .cat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .cats .cat h2{font-size:15px;margin:0 0 4px;color:var(--muted)}
 .mini{list-style:none;margin:0;padding:0}
-.mini a{display:flex;gap:8px;align-items:center;padding:4px 2px;color:var(--fg);text-decoration:none;font-size:15px;font-weight:600}
+.mini a{display:grid;grid-template-columns:22px 1fr;gap:0 8px;padding:6px 2px;color:var(--fg);text-decoration:none;font-size:15px;line-height:1.4}
+.mini small{grid-column:2;font-size:12.5px;color:var(--muted)}
 .mini a:hover{color:var(--brand)}
-.mini span{width:22px;text-align:center}
-@media (max-width:760px){.cats{grid-template-columns:1fr 1fr}}
+.mini span{grid-row:span 2;text-align:center}
 /* 카드 목록 */
 .cards{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .cards a{display:grid;grid-template-columns:36px 1fr;gap:0 10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--fg);text-decoration:none;height:100%}
