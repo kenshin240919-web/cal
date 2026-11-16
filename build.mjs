@@ -40,7 +40,7 @@ function page({title, desc, path, body, head = ''}) {
 <meta property="og:type" content="website"><meta property="og:url" content="${url(path)}"><meta property="og:image" content="${url('/og.png')}"><meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.adsense}" crossorigin="anonymous"></script>${head}</head>
-<body><a class="skip" href="#main">본문으로 바로가기</a><header><div class="wrap top"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28">${esc(SITE.name)}</a></div>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header><div class="wrap top"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"><span><b>${esc(SITE.name.slice(0, 2))}</b>${esc(SITE.name.slice(2))}</span></a></div>
 <nav class="gnb" aria-label="분류"><div class="wrap">${CATS.map(([s, n]) => `<a href="/#${s}">${n}</a>`).join('')}</div></nav></header>
 <main id="main" class="wrap">${body}</main>
 <footer><div class="wrap"><p><a href="/about/">사이트 소개</a> · <a href="/privacy/">개인정보 처리방침</a> · <a href="${SITE.contact}">문의</a></p>

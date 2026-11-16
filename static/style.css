@@ -8,6 +8,7 @@ a{color:var(--brand)}
 header{background:var(--card);border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;height:56px}
 .brand{display:flex;gap:8px;align-items:center;font-weight:800;font-size:19px;color:var(--fg);text-decoration:none}
+.brand b{color:var(--brand)}
 .gnb .wrap{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px}
 .gnb a{flex:none;padding:4px 12px;border-radius:99px;background:var(--bg);color:var(--fg);text-decoration:none;font-size:14px}
 .gnb a:hover{background:var(--brand-soft)}
