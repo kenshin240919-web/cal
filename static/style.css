@@ -40,6 +40,7 @@ textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:v
 .out dt{color:var(--muted)}.out dd{margin:0;font-weight:700;text-align:right}
 .warn{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:14px}
 details summary{cursor:pointer}
+.ad{margin:28px 0;clear:both}
 /* 표 */
 .tbl{overflow-x:auto;margin:10px 0}
 table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}

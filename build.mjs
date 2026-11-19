@@ -13,7 +13,8 @@ const SITE = {
   desc: '연봉 실수령액, 퇴직금, 대출이자, 실업급여, 환율, 날짜, 퍼센트까지 자주 쓰는 계산기를 한곳에 모았습니다.',
   // 문의: 환경변수 CAL_EMAIL이 있으면 메일 주소, 없으면 같은 운영자의 life 문의 페이지로 연결
   contact: process.env.CAL_EMAIL ? `mailto:${process.env.CAL_EMAIL}` : 'https://life.guidejung.com/contact/',
-  adsense: 'ca-pub-3087515825675332',  // guidejung.com·life와 같은 게시자 ID
+  adsense: 'ca-pub-3087515825675332',
+  adSlot: '6639512269',  // 수동 디스플레이 광고 칸(계산 결과 아래, 자주 묻는 질문 앞)  // guidejung.com·life와 같은 게시자 ID
   // 사용자가 받아 알려 주는 값(빈 값이면 태그를 넣지 않음)
   ga: '', clarity: '',
   verify: {google: '', naver: 'e0e1d43f9f6ad8dc17f762fef8d20b25da6a0791', bing: '94FB5F5FCBAB10DABDC0256A035F8369'},
@@ -39,7 +40,7 @@ function page({title, desc, path, body, head = ''}) {
 <meta property="og:site_name" content="${esc(SITE.name)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website"><meta property="og:url" content="${url(path)}"><meta property="og:image" content="${url('/og.png')}?v=2"><meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><link rel="alternate" type="application/rss+xml" title="${esc(SITE.name)}" href="${url('/rss.xml')}">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.adsense}" crossorigin="anonymous"></script>${head}</head>
+<script>if(location.hostname==='cal.guidejung.com'){const s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.adsense}';document.head.appendChild(s)}</script>${head}</head>
 <body><a class="skip" href="#main">본문으로 바로가기</a><header><div class="wrap top"><a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28"><span><b>${esc(SITE.name.slice(0, 2))}</b>${esc(SITE.name.slice(2))}</span></a></div>
 <nav class="gnb" aria-label="분류"><div class="wrap">${CATS.map(([s, n]) => `<a href="/#${s}">${n}</a>`).join('')}</div></nav></header>
 <main id="main" class="wrap">${body}</main>
@@ -53,6 +54,7 @@ function write(path, data) {
   mkdirSync(file.slice(0, file.lastIndexOf('/')), {recursive: true});
   writeFileSync(file, data);
 }
+const ad = `<div class="ad"><ins class="adsbygoogle" style="display:block" data-ad-client="${SITE.adsense}" data-ad-slot="${SITE.adSlot}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div>`;
 const card = c => `<li><a href="/${c.slug}/"><span class="ic" aria-hidden="true">${c.icon}</span><b>${esc(c.name)}</b><span>${esc(c.desc.split(/\.(?=\s|$)/)[0])}</span></a></li>`;
 const grid = list => `<ul class="cards">${list.map(card).join('')}</ul>`;
 
@@ -82,7 +84,9 @@ for (const c of calcs) {
   const body = `<article class="post"><nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a> › <a href="/#${c.cat}">${catName}</a></nav>
 <h1>${esc(c.name)}</h1><p class="lead">${c.lead}</p>
 ${c.form}
+${ad}
 ${c.sections.map(([h, html]) => `<h2>${esc(h)}</h2>${html.replace(/<table/g, '<div class="tbl"><table').replace(/<\/table>/g, '</table></div>')}`).join('\n')}
+${ad}
 <h2>자주 묻는 질문</h2>${c.faq.map(([q, a]) => `<details class="faq" open><summary>${esc(q)}</summary><p>${a}</p></details>`).join('')}
 <p class="note">${dot(SITE.updated)} 기준 요율·제도로 계산합니다. 결과는 참고용이며, 신청이나 결정 전에 해당 기관에서 다시 확인해 주세요.</p></article>
 <section class="related"><h2>다른 계산기</h2>${grid(related)}</section>`;
