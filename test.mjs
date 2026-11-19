@@ -76,4 +76,10 @@ assert.equal(C.unemployment({monthly: 3e6, span: 0, over50: false, year: 2027}).
 assert.deepEqual(C.cycles('2026-11-01', 28, 1)[0], {start: '2026-11-01', next: '2026-11-29', ovu: '2026-11-15', from: '2026-11-10', to: '2026-11-16'});
 assert.deepEqual(C.countText('안녕 하세요\nab'), {withSpace: 8, noSpace: 7, words: 3, lines: 2, utf8: 19, euckr: 14});
 
+// 연말정산(2026 귀속): 총급여 4천, 신용 1,500만·체크 500만 → 25%(1천만)는 신용카드로 채움 → 500만×15% + 500만×30% = 225만
+assert.equal(C.cardDeduction(4e7, {credit: 15e6, check: 5e6}), 2250000);
+assert.equal(C.cardDeduction(4e7, {check: 4e7, kids: 2}), 4e6); // 자녀 2명 한도 400만
+assert.ok(Math.abs(C.yearEnd({g: 4e7}).refund) < 1000); // 공제 없으면 매달 뗀 세금과 거의 같음
+assert.ok(C.yearEnd({g: 4e7, pension: 6e6}).refund > C.yearEnd({g: 4e7}).refund);
+
 console.log('계산 검사 통과');

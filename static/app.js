@@ -132,10 +132,17 @@ const R = {
     return res(['주휴수당(1주)', pay ? W(pay) : '0원'], [['주휴시간', `${N(pay / v.wage || 0, 1)}시간`], ['주급(주휴 포함)', W(week)], ['월 환산', W(v.wage * Math.round((v.hours + pay / v.wage) * C.WEEKS_PER_MONTH))]],
       v.hours < 15 ? warn('1주 15시간 미만이면 주휴수당이 없습니다.') : '');
   },
+  yearend(v) {
+    if (!(v.g > 0)) return '';
+    const x = C.yearEnd({g: v.g, family: v.family || 1, kids: v.kids, kidsCredit: v.kidsc, credit: v.credit, check: v.check, market: v.market, medical: v.medical, edu: v.edu, insure: v.insure, pension: v.pension, rent: v.rent, give: v.give, paid: v.paid});
+    const big = Math.abs(x.refund) < 1000 ? ['예상 결과', '환급·추가 납부 거의 없음'] : x.refund > 0 ? ['예상 환급액', W(x.refund)] : ['예상 추가 납부액', W(-x.refund)];
+    return res(big, [['근로소득금액', W(x.income)], ['신용카드 등 소득공제', W(x.card)], ['과세표준', W(x.taxBase)], ['산출세액', W(x.calc)], ['결정세액(소득세)', W(x.tax)], ['지방소득세', W(x.local)], [x.estimated ? '기납부세액(추정)' : '기납부세액', W(x.paid)]],
+      (x.std ? warn('특별공제보다 표준세액공제 13만 원이 유리해 그쪽으로 계산했습니다.') : '') + (x.estimated ? '<p class="small">기납부세액을 비워 두면 매달 간이세액표로 뗐을 금액을 추정해 넣습니다. 원천징수영수증의 기납부세액(소득세)을 넣으면 더 정확합니다.</p>' : ''));
+  },
 };
 
 // ---------- 폼 연결 ----------
-const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year)$/;
+const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year|g|kidsc|credit|check|market|medical|edu|insure|pension|rent|give|paid)$/;
 function read(f) {
   const v = {};
   for (const el of f.elements) if (el.name) v[el.name] = NUMS.test(el.name) ? parseFloat(el.value.replace(/,/g, '')) || 0 : el.value;

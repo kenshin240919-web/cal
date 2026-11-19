@@ -196,3 +196,30 @@ export function countText(t) {
     euckr: chars.reduce((s, c) => s + (c.charCodeAt(0) > 127 ? 2 : 1), 0),
   };
 }
+
+// ---------- 연말정산(2026년 귀속, 2027년 1~2월 정산) ----------
+// 신용카드 기본 한도는 2026년 사용분부터 기본공제 자녀 수(20세 이하)에 따라 늘어남: 7천 이하 300/350/400만, 초과 250/275/300만.
+export function cardDeduction(g, {credit = 0, check = 0, market = 0, kids = 0}) {
+  let th = g * 0.25; // 총급여 25%는 공제율 낮은 신용카드부터 채움
+  const over = x => {const o = Math.max(0, x - th); th = Math.max(0, th - x); return o;};
+  const c = over(credit) * 0.15, k = over(check) * 0.3, m = over(market) * 0.4;
+  const low = g <= 7e7, k2 = Math.min(kids, 2);
+  const basic = (low ? [300, 350, 400] : [250, 275, 300])[k2] * 1e4;
+  const extra = Math.min(Math.max(0, c + k + m - basic), m, low ? 3e6 : 2e6); // 넘친 금액은 전통시장·대중교통 몫만 추가 한도
+  return Math.min(c + k + m, basic) + extra;
+}
+/** g = 총급여(비과세 빼고). paid = 기납부 소득세(0이면 매달 떼는 세금 추정). 반환 refund > 0이면 환급(지방소득세 포함). */
+export function yearEnd({g, family = 1, kids = 0, kidsCredit = 0, credit = 0, check = 0, market = 0, medical = 0, edu = 0, insure = 0, pension = 0, rent = 0, give = 0, paid = 0}) {
+  const ins = insurance(g / 12, 2026), y = k => ins[k] * 12;
+  const income = g - wageDeduction(g), card = cardDeduction(g, {credit, check, market, kids});
+  const base = income - 1.5e6 * Math.max(1, family) - y('pension') - card;
+  const taxOf = (b, credits) => {const t = baseTax(Math.max(0, b)); return {t, b: Math.max(0, b), tax: Math.max(0, t - wageTaxCredit(t, g) - childCredit(kidsCredit) - credits)};};
+  const pen = Math.min(pension, 9e6) * (g <= 5.5e7 ? 0.15 : 0.12);
+  const rentC = g <= 8e7 ? Math.min(rent, 1e7) * (g <= 5.5e7 ? 0.17 : 0.15) : 0;
+  const special = Math.min(insure, 1e6) * 0.12 + Math.max(0, medical - g * 0.03) * 0.15 + edu * 0.15 + Math.min(give, 1e7) * 0.15 + Math.max(0, give - 1e7) * 0.3;
+  const a = taxOf(base - y('health') - y('ltc') - y('emp'), pen + rentC + special), b = taxOf(base, pen + 130000);
+  const r = a.tax <= b.tax ? {...a, std: false} : {...b, std: true};
+  const tax = floor10(r.tax), before = paid || salary(g, {nontax: 0, family, kids: kidsCredit, year: 2026}).incomeTax * 12;
+  return {income, card, taxBase: r.b, calc: r.t, tax, local: floor10(tax * 0.1), paid: before, estimated: !paid, std: r.std,
+    refund: before + floor10(before * 0.1) - tax - floor10(tax * 0.1)};
+}
