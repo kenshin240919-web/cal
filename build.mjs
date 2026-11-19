@@ -16,7 +16,7 @@ const SITE = {
   adsense: 'ca-pub-3087515825675332',
   adSlot: '6639512269',  // 수동 디스플레이 광고 칸(계산 결과 아래, 자주 묻는 질문 앞)  // guidejung.com·life와 같은 게시자 ID
   // 사용자가 받아 알려 주는 값(빈 값이면 태그를 넣지 않음)
-  ga: '', clarity: '',
+  ga: 'G-RBTCRWDGP2', clarity: '',
   verify: {google: '', naver: 'e0e1d43f9f6ad8dc17f762fef8d20b25da6a0791', bing: '94FB5F5FCBAB10DABDC0256A035F8369'},
   daumPin: '',
   updated: '2026-11-16',  // 요율 기준일: 요율을 고치면 함께 바꿈
