@@ -139,10 +139,24 @@ const R = {
     return res(big, [['근로소득금액', W(x.income)], ['신용카드 등 소득공제', W(x.card)], ['과세표준', W(x.taxBase)], ['산출세액', W(x.calc)], ['결정세액(소득세)', W(x.tax)], ['지방소득세', W(x.local)], [x.estimated ? '기납부세액(추정)' : '기납부세액', W(x.paid)]],
       (x.std ? warn('특별공제보다 표준세액공제 13만 원이 유리해 그쪽으로 계산했습니다.') : '') + (x.estimated ? '<p class="small">기납부세액을 비워 두면 매달 간이세액표로 뗐을 금액을 추정해 넣습니다. 원천징수영수증의 기납부세액(소득세)을 넣으면 더 정확합니다.</p>' : ''));
   },
+  cgt(v) {
+    if (!(v.sell > 0) || !okDate(v.bdate) || !okDate(v.sdate)) return '';
+    if (C.diffDays(v.bdate, v.sdate) < 0) return warn('양도일이 취득일보다 늦어야 합니다.');
+    const hold = C.age(v.bdate, v.sdate).man, x = C.capitalGains({sell: v.sell, buy: v.buy, cost: v.cost, hold, live: v.live, houses: v.houses, regulated: v.reg === '1'});
+    if (!x.total) return res(['예상 양도소득세', '0원'], [['양도차익', W(x.gain)], ['보유 기간', `${hold}년`]], `<p class="small">${x.note}</p>`);
+    const rate = x.rate ? `단기 ${x.rate * 100}%` : `기본세율${x.heavy ? ` + 중과 ${x.heavy * 100}%p` : ''}`;
+    return res(['예상 양도소득세(지방세 포함)', W(x.total)], [['양도차익', W(x.gain)], ...(x.taxable < x.gain ? [['과세 양도차익(12억 초과분)', W(x.taxable)]] : []), ['보유 기간', `${hold}년`], [`장기보유특별공제(${Math.round(x.ltr * 100)}%)`, W(x.ltd)], ['기본공제', W(2.5e6)], ['과세표준', W(x.base)], ['적용 세율', rate], ['양도소득세', W(x.tax)], ['지방소득세', W(x.local)]],
+      x.heavy ? warn('조정대상지역 다주택 중과(2026년 5월 10일 양도분부터)로 장기보유특별공제가 빠졌습니다.') : '');
+  },
+  stock(v) {
+    if (!(v.profit > 0)) return '';
+    const x = C.stockGains(v.profit, v.scost);
+    return res(['해외주식 양도소득세', W(x.total)], [['과세표준(250만 원 공제 후)', W(x.base)], ['양도소득세 20%', W(x.tax)], ['지방소득세 2%', W(x.local)]]);
+  },
 };
 
 // ---------- 폼 연결 ----------
-const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year|g|kidsc|credit|check|market|medical|edu|insure|pension|rent|give|paid)$/;
+const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year|g|kidsc|credit|check|market|medical|edu|insure|pension|rent|give|paid|sell|buy|cost|live|houses|profit|scost)$/;
 function read(f) {
   const v = {};
   for (const el of f.elements) if (el.name) v[el.name] = NUMS.test(el.name) ? parseFloat(el.value.replace(/,/g, '')) || 0 : el.value;

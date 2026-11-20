@@ -82,4 +82,10 @@ assert.equal(C.cardDeduction(4e7, {check: 4e7, kids: 2}), 4e6); // 자녀 2명 �
 assert.ok(Math.abs(C.yearEnd({g: 4e7}).refund) < 1000); // 공제 없으면 매달 뗀 세금과 거의 같음
 assert.ok(C.yearEnd({g: 4e7, pension: 6e6}).refund > C.yearEnd({g: 4e7}).refund);
 
+// 양도세: 15억 1주택 10년 보유·거주 → 과세차익 1.36억, 장특공 80% → 과세표준 2,470만 → 244.5만
+assert.equal(C.capitalGains({sell: 15e8, buy: 8e8, cost: 2e7, hold: 10, live: 10, regulated: true}).tax, 2445000);
+assert.equal(C.capitalGains({sell: 9e8, buy: 5e8, hold: 3, live: 3}).total, 0); // 12억 이하 비과세
+assert.equal(C.capitalGains({sell: 10e8, buy: 6e8, hold: 5, houses: 2, regulated: true}).ltr, 0); // 중과면 장특공 없음
+assert.equal(C.stockGains(2e7).total, 3850000);
+
 console.log('계산 검사 통과');

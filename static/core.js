@@ -223,3 +223,25 @@ export function yearEnd({g, family = 1, kids = 0, kidsCredit = 0, credit = 0, ch
   return {income, card, taxBase: r.b, calc: r.t, tax, local: floor10(tax * 0.1), paid: before, estimated: !paid, std: r.std,
     refund: before + floor10(before * 0.1) - tax - floor10(tax * 0.1)};
 }
+
+// ---------- 양도소득세(주택, 거주자) ----------
+// 다주택 중과 유예는 2026.5.9 종료 → 조정대상지역 2주택 +20%p, 3주택 이상 +30%p, 장기보유특별공제 배제.
+/** hold·live = 보유·거주 연수(만). houses: 1·2·3(이상). regulated = 양도 시 조정대상지역. */
+export function capitalGains({sell, buy, cost = 0, hold, live = 0, houses = 1, regulated = false}) {
+  const gain = sell - buy - cost;
+  if (gain <= 0) return {gain, tax: 0, local: 0, total: 0, note: '양도차익이 없어 세금이 없습니다.'};
+  const one = houses === 1, exempt = one && hold >= 2 && (live >= 2 || !regulated);
+  if (exempt && sell <= 12e8) return {gain, tax: 0, local: 0, total: 0, note: '1세대 1주택 비과세(양도가 12억 원 이하)입니다.'};
+  const taxable = exempt ? gain * (sell - 12e8) / sell : gain;
+  const heavy = !one && regulated && hold >= 2 ? (houses === 2 ? 0.2 : 0.3) : 0;
+  const ltr = heavy || hold < 3 ? 0 : exempt && live >= 2 ? Math.min(hold, 10) * 0.04 + Math.min(live, 10) * 0.04 : Math.min(hold, 15) * 0.02;
+  const base = Math.floor(Math.max(0, taxable * (1 - ltr) - 2.5e6) + 1e-6); // 1e-6: 소수 오차 보정
+  const rate = hold < 1 ? 0.7 : hold < 2 ? 0.6 : 0;
+  const tax = floor10(rate ? base * rate : baseTax(base) + base * heavy);
+  return {gain, taxable, ltr, ltd: taxable * ltr, base, heavy, rate, tax, local: floor10(tax * 0.1), total: tax + floor10(tax * 0.1)};
+}
+// 해외주식: 1년 손익 합산 − 기본공제 250만 원 × 22%(지방소득세 포함)
+export function stockGains(profit, cost = 0) {
+  const base = Math.max(0, profit - cost - 2.5e6), tax = floor10(base * 0.2);
+  return {base, tax, local: floor10(tax * 0.1), total: tax + floor10(tax * 0.1)};
+}
