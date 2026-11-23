@@ -148,6 +148,15 @@ const R = {
     return res(['예상 양도소득세(지방세 포함)', W(x.total)], [['양도차익', W(x.gain)], ...(x.taxable < x.gain ? [['과세 양도차익(12억 초과분)', W(x.taxable)]] : []), ['보유 기간', `${hold}년`], [`장기보유특별공제(${Math.round(x.ltr * 100)}%)`, W(x.ltd)], ['기본공제', W(2.5e6)], ['과세표준', W(x.base)], ['적용 세율', rate], ['양도소득세', W(x.tax)], ['지방소득세', W(x.local)]],
       x.heavy ? warn('조정대상지역 다주택 중과(2026년 5월 10일 양도분부터)로 장기보유특별공제가 빠졌습니다.') : '');
   },
+  preg(v) {
+    if (!okDate(v.d) || !okDate(v.ref)) return '';
+    const due = v.by === 'due', lmp = due ? C.addDays(v.d, -280) : v.d, p = C.pregnancy(lmp, v.ref, due ? 28 : v.len || 28);
+    if (p.days < 0) return warn('기준 날짜가 마지막 생리 시작일보다 빠릅니다.');
+    const S = s => `${s.slice(2).replaceAll('-', '.')}(${C.weekday(s)})`;
+    const marks = [[11, 14, '목덜미 투명대 초음파·1차 기형아 검사'], [15, 21, '2차 기형아 검사(쿼드)'], [20, 25, '정밀 초음파'], [24, 29, '임신성 당뇨 검사'], [32, 33, '근로시간 단축 신청 가능(32주부터)'], [37, 38, '만삭(이때부터 정상 출산 시기)'], [40, 41, '출산 예정일']];
+    return res(['오늘 임신 주수', `${p.weeks}주 ${p.day}일`], [['출산 예정일', D(p.due)], [p.left >= 0 ? '예정일까지' : '예정일 지남', `${N(Math.abs(p.left))}일`], ['임신 개월', `${Math.min(p.month, 10)}개월`], ['시기', `${p.tri}삼분기(${['초기', '중기', '후기'][p.tri - 1]})`]],
+      tbl(['시기', '날짜', '할 일'], marks.map(([a, b, t]) => [`${a}${b - a > 1 ? `~${b - 1}` : ''}주`, `${S(p.at(a))}${b - a > 1 ? ` ~ ${S(C.addDays(p.at(b), -1))}` : ''}`, t])) + (p.weeks > 42 ? warn('42주가 지났습니다. 날짜를 다시 확인해 주세요.') : ''));
+  },
   stock(v) {
     if (!(v.profit > 0)) return '';
     const x = C.stockGains(v.profit, v.scost);

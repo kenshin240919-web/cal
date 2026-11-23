@@ -88,4 +88,9 @@ assert.equal(C.capitalGains({sell: 9e8, buy: 5e8, hold: 3, live: 3}).total, 0); 
 assert.equal(C.capitalGains({sell: 10e8, buy: 6e8, hold: 5, houses: 2, regulated: true}).ltr, 0); // 중과면 장특공 없음
 assert.equal(C.stockGains(2e7).total, 3850000);
 
+// 임신 주수: 2026-06-01 시작 → 11-24는 25주 1일, 예정일 2027-03-08, 주기 32일이면 4일 늦게
+const pg = C.pregnancy('2026-06-01', '2026-11-24');
+assert.deepEqual([pg.weeks, pg.day, pg.due], [25, 1, '2027-03-08']);
+assert.equal(C.pregnancy('2026-06-01', '2026-11-24', 32).due, '2027-03-12');
+
 console.log('계산 검사 통과');

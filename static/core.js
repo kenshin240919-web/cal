@@ -245,3 +245,11 @@ export function stockGains(profit, cost = 0) {
   const base = Math.max(0, profit - cost - 2.5e6), tax = floor10(base * 0.2);
   return {base, tax, local: floor10(tax * 0.1), total: tax + floor10(tax * 0.1)};
 }
+
+// ---------- 임신 주수 ----------
+/** lmp = 마지막 생리 시작일. 주기가 28일보다 길면 배란이 늦은 만큼 예정일도 늦춤(네겔레 법칙 보정). */
+export function pregnancy(lmp, ref, cycle = 28) {
+  const adj = cycle - 28, days = diffDays(lmp, ref) - adj;
+  return {days, weeks: Math.floor(days / 7), day: ((days % 7) + 7) % 7, due: addDays(lmp, 280 + adj), left: 280 - days,
+    month: Math.floor(days / 28) + 1, tri: days < 98 ? 1 : days < 196 ? 2 : 3, at: w => addDays(lmp, w * 7 + adj)};
+}
