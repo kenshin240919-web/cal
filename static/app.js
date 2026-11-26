@@ -157,6 +157,13 @@ const R = {
     return res(['오늘 임신 주수', `${p.weeks}주 ${p.day}일`], [['출산 예정일', D(p.due)], [p.left >= 0 ? '예정일까지' : '예정일 지남', `${N(Math.abs(p.left))}일`], ['임신 개월', `${Math.min(p.month, 10)}개월`], ['시기', `${p.tri}삼분기(${['초기', '중기', '후기'][p.tri - 1]})`]],
       tbl(['시기', '날짜', '할 일'], marks.map(([a, b, t]) => [`${a}${b - a > 1 ? `~${b - 1}` : ''}주`, `${S(p.at(a))}${b - a > 1 ? ` ~ ${S(C.addDays(p.at(b), -1))}` : ''}`, t])) + (p.weeks > 42 ? warn('42주가 지났습니다. 날짜를 다시 확인해 주세요.') : ''));
   },
+  gift(v) {
+    if (!(v.gamount > 0)) return '';
+    const lineal = v.rel === 'parent' || v.rel === 'grand', x = C.giftTax({amount: v.gamount, prior: v.prior, rel: v.rel, minor: v.minor === '1', marriage: lineal && v.wed === '1'});
+    if (!x.tax) return res(['증여세', '0원'], [['증여재산 합계(10년)', W(x.total)], ['증여재산공제', W(x.ded)]], '<p class="small">공제 안이라 낼 세금이 없습니다. 0원이어도 신고해 두면 나중에 집을 살 때 자금 출처로 쓸 수 있습니다.</p>');
+    return res(['납부할 증여세', W(x.tax)], [['증여재산 합계(10년)', W(x.total)], ['증여재산공제', W(x.ded)], ['과세표준', W(x.base)], ['산출세액', W(x.calc)], ...(x.sur ? [['세대생략 할증', W(x.sur)]] : []), ...(x.prev ? [['예전 증여분 세금(추정)', `−${W(x.prev)}`]] : []), ['신고세액공제 3%', `−${W(x.credit)}`]],
+      '<p class="small">증여받은 달의 말일부터 3개월 안에 신고해야 3% 공제를 받습니다.</p>');
+  },
   stock(v) {
     if (!(v.profit > 0)) return '';
     const x = C.stockGains(v.profit, v.scost);
@@ -165,7 +172,7 @@ const R = {
 };
 
 // ---------- 폼 연결 ----------
-const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year|g|kidsc|credit|check|market|medical|edu|insure|pension|rent|give|paid|sell|buy|cost|live|houses|profit|scost)$/;
+const NUMS = /^(amount|rate|years|a|b|p|n|annual|nontax|family|kids|months|monthly|bonus|leave|wage|hours|days|v|income|stress|other|len|pay|sanjae|year|g|kidsc|credit|check|market|medical|edu|insure|pension|rent|give|paid|sell|buy|cost|live|houses|profit|scost|gamount|prior)$/;
 function read(f) {
   const v = {};
   for (const el of f.elements) if (el.name) v[el.name] = NUMS.test(el.name) ? parseFloat(el.value.replace(/,/g, '')) || 0 : el.value;

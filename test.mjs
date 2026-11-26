@@ -93,4 +93,10 @@ const pg = C.pregnancy('2026-06-01', '2026-11-24');
 assert.deepEqual([pg.weeks, pg.day, pg.due], [25, 1, '2027-03-08']);
 assert.equal(C.pregnancy('2026-06-01', '2026-11-24', 32).due, '2027-03-12');
 
+// 증여세: 성년 자녀 1억 → (1억−5천만)×10%=500만 −3% = 485만, 혼인 공제면 0, 조부모→미성년 1억은 30% 할증
+assert.equal(C.giftTax({amount: 1e8}).tax, 4850000);
+assert.equal(C.giftTax({amount: 1e8, marriage: true}).tax, 0);
+assert.equal(C.giftTax({amount: 1e8, rel: 'grand', minor: true}).tax, 10088000);
+assert.equal(C.giftRate(15e8), 440000000);
+
 console.log('계산 검사 통과');

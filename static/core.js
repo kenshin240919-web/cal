@@ -253,3 +253,21 @@ export function pregnancy(lmp, ref, cycle = 28) {
   return {days, weeks: Math.floor(days / 7), day: ((days % 7) + 7) % 7, due: addDays(lmp, 280 + adj), left: 280 - days,
     month: Math.floor(days / 28) + 1, tri: days < 98 ? 1 : days < 196 ? 2 : 3, at: w => addDays(lmp, w * 7 + adj)};
 }
+
+// ---------- 증여세 ----------
+// 증여재산공제(10년 합산): 배우자 6억, 부모·조부모 → 자녀·손자녀 5천만(미성년 2천만), 자녀 → 부모 5천만, 기타 친족 1천만.
+// 혼인·출산 공제: 부모·조부모에게 받은 것 1억 추가(평생 1번). 세율·공제는 2026년 현재 시행법(정부 개편안은 국회 확정 전).
+export const GIFT_DED = {spouse: 6e8, parent: 5e7, grand: 5e7, child: 5e7, relative: 1e7, other: 0};
+const GIFT_BR = [[1e8, 0.1], [5e8, 0.2], [1e9, 0.3], [3e9, 0.4], [Infinity, 0.5]];
+export function giftRate(b) {let t = 0, prev = 0; for (const [cap, r] of GIFT_BR) {if (b <= prev) break; t += (Math.min(b, cap) - prev) * r; prev = cap;} return t;}
+/** amount = 이번 증여, prior = 같은 사람(부모면 부모 양쪽)에게 10년 안에 받은 것. rel = GIFT_DED 키. */
+export function giftTax({amount, prior = 0, rel = 'parent', minor = false, marriage = false}) {
+  const lineal = rel === 'parent' || rel === 'grand';
+  const basic = (lineal && minor ? 2e7 : GIFT_DED[rel]) + (lineal && marriage ? 1e8 : 0);
+  const total = amount + prior, ded = Math.min(total, basic);
+  const base = Math.floor(total - ded), calc = base < 5e5 ? 0 : giftRate(base);
+  const sur = rel === 'grand' ? calc * (minor && amount > 2e9 ? 0.4 : 0.3) : 0; // 세대생략 할증
+  const prev = prior ? giftRate(Math.max(0, prior - basic)) * (rel === 'grand' ? 1.3 : 1) : 0; // 예전 증여분 세금(기납부세액 추정)
+  const due = Math.max(0, calc + sur - prev), credit = due * 0.03; // 기한 안 신고 시 3% 공제
+  return {total, ded, base, calc, sur, prev, credit, tax: floor10(due - credit)};
+}
